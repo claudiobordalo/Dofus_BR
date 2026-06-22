@@ -30,6 +30,8 @@ from src.utilidades import (
 
 from src.mapa import GameMap
 
+from src.detector import Detector
+
 class HarvestBot:
     def __init__(self, map_name: str, selected_classes: List[str], 
                  initial_position: Tuple[int, int], pod_available: int,
@@ -49,9 +51,11 @@ class HarvestBot:
         self.screen_regions = MAP_CHANGE
         
         # Chargement du modèle YOLO
-        self.model = YOLO(YOLO_MODEL)
+        model = YOLO(YOLO_MODEL)
         if torch.cuda.is_available():
-            self.model.to("cuda")
+            model.to("cuda")
+
+self.detector = Detector(model)
     
     def start(self, running_indication: tk.Label, coord_indication: tk.Label) -> None:
         """
@@ -173,10 +177,22 @@ class HarvestBot:
             keyboard.release('y')
             
             # Traitement des détections
-            detections = self.process_detections(temp_img_path)
+            detections, class_counts = self.detector.process_detections(
+                temp_img_path,
+                self.selected_classes,
+            )
+
+            for class_name, count in class_counts.items():
+                self.game_map.update_resource(
+                    self.current_position,
+                    class_name,
+                    count,
+                )
             
             if detections:
-                clique_humano(*detections[0])
+                resource_name, x, y = detections[0]
+                self.add_to_inventory(resource_name)
+                clique_humano(x, y)
 
                 stop_monster_event = threading.Event()
                 monitor_thread = threading.Thread(
@@ -186,13 +202,16 @@ class HarvestBot:
                 monitor_thread.start()
                 
                 # Clic sur les ressources
-                for idx, (x, y) in enumerate(detections[1:], start=2):
+                for idx, (resource_name, x, y) in enumerate(
+                    detections[1:],
+                    start=2,
+                ):
                     if stop_monster_event.is_set():
                         print("[Bot Harvest] Interruption levée par le thread de détection d'écran noir !")
                         self.monster_detected()
                         stop_monster_event.clear()
 
-
+                    self.add_to_inventory(resource_name)
                     mover_mouse_humano(x, y)
                     clique_humano(x, y)
                     time.sleep(0.2)
