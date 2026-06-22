@@ -33,7 +33,4 @@ class Detector:
                             detections.append((class_name, center_x, center_y))
         
         # Mise à jour des ressources dans la carte
-        for class_name, count in class_counts.items():
-            self.game_map.update_resource(self.current_position, class_name, count)
-            
-        return detections
+        return detections, class_counts
