@@ -1,4 +1,9 @@
-def process_detections(self, img_path: str) -> List[Tuple[int, int]]:
+class Detector:
+
+    def __init__(self, model):
+        self.model = model
+
+    def process_detections(self, img_path: str) -> List[Tuple[int, int]]:
         """Traite les détections YOLO et retourne les coordonnées des ressources."""
         results = self.model(img_path, imgsz=640, save=True, show=False)
         detections = []
