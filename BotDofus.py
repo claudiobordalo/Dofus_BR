@@ -14,17 +14,10 @@ import torch
 import mss
 import numpy as np
 import cv2
-import keyboard
-import pyautogui
-import winsound
-
 from humancursor import SystemCursor
 from ultralytics import YOLO
 
-APP_NAME = "Bot Dofus BR"
-APP_VERSION = "1.0.0"
-
-DEBUG = False
+from config import *
 
 class GameMap:
     def __init__(self, map_name: str):
@@ -204,15 +197,10 @@ class HarvestBot:
         self.is_paused = False
         
         # Définition des régions d'écran pour le changement de map
-        self.screen_regions = {
-            "right": (1608, 546, 1872, 676),
-            "left": (280, 13, 315, 804),
-            "bottom": (1280, 927, 1535, 1079),
-            "top": (329, 1, 1583, 12)
-        }
+        self.screen_regions = MAP_CHANGE
         
         # Chargement du modèle YOLO
-        self.model = YOLO("my_model.pt")
+        self.model = YOLO(YOLO_MODEL)
         if torch.cuda.is_available():
             self.model.to("cuda")
     
