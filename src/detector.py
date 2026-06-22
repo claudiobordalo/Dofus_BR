@@ -30,8 +30,7 @@ class Detector:
 
                         # Vérification que le point est bien dans l'espace de farm (c'est à dire pas sur les côtés)
                         if is_point_in_farm(center_x, center_y):
-                            detections.append((center_x, center_y))
-                            self.add_to_inventory(class_name)
+                            detections.append((class_name, center_x, center_y))
         
         # Mise à jour des ressources dans la carte
         for class_name, count in class_counts.items():
