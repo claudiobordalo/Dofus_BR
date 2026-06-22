@@ -4,7 +4,7 @@ class Detector:
         self.model = model
 
     def process_detections(self, img_path: str) -> List[Tuple[int, int]]:
-        """Traite les détections YOLO et retourne les coordonnées des ressources."""
+        """Processa as detecções do YOLO e retorna os recursos encontrados."""
         results = self.model(img_path, imgsz=640, save=True, show=False)
         detections = []
         class_counts = {}
