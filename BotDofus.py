@@ -442,32 +442,11 @@ class BotInterface:
         keyboard.add_hotkey('*', self.stop_bot)
     
     def get_available_classes(self):
-        """Retorna os recursos disponíveis e seus nomes em português."""
-
-        model = YOLO("my_model.pt")
-
-        traducoes = {
-            "Ble": "Trigo",
-            "Bombu": "Bombu",
-            "Chataigner": "Castanheiro",
-            "Chene": "Carvalho",
-            "Eau": "Água (Pesca)",
-            "Erable": "Bordo",
-            "Frene": "Freixo",
-            "If": "Teixo",
-            "Menthe": "Hortelã",
-            "Merisier": "Cerejeira",
-            "Noisetier": "Aveleira",
-            "Noyer": "Nogueira",
-            "Ortie": "Urtiga",
-            "Sauge": "Sálvia",
-            "Trefle": "Trevo"
-        }
-
-        return [
-            (nome_original, traducoes.get(nome_original, nome_original))
-            for nome_original in model.names.values()
-        ]
+        """
+        Carrega as classes disponíveis no modelo YOLO.
+        """
+        model = YOLO(YOLO_MODEL)
+        return sorted(model.names.values())
     
     def validate_inputs(self) -> Tuple[bool, str]:
         """Valide les entrées de l'utilisateur."""
