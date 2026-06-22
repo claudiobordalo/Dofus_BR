@@ -23,7 +23,7 @@ class Detector:
                     class_name = self.model.names[int(cls)]
                     class_counts[class_name] = class_counts.get(class_name, 0) + 1
                     
-                    if class_name in self.selected_classes:
+                    if class_name in selected_classes:
                         x1, y1, x2, y2 = box.tolist()
                         center_x = int((x1 + x2) / 2 + random.gauss(0, (x2 - x1) * 0.1))
                         center_y = int((y1 + y2) / 2 + random.gauss(0, (y2 - y1) * 0.1))
