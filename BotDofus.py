@@ -254,7 +254,7 @@ class HarvestBot:
                              check_interval: float = 0.1) -> None:
         """Surveille les attaques de monstres."""
         while not stop_event.is_set():
-            if self.is_screen_black():
+            if tela_preta():
                 print("Monstre détecté !")
                 stop_event.set()
             time.sleep(check_interval)
@@ -291,10 +291,10 @@ class HarvestBot:
             click_x = random.randint(region[0], region[2])
             click_y = random.randint(region[1], region[3])
             
-            self.human_like_movement(click_x, click_y)
-            self.human_like_click(click_x, click_y)
+            mover_mouse_humano(click_x, click_y)
+            clique_humano(click_x, click_y)
             
-            if self.detect_map_change():
+            if detectar_troca_mapa():
                 time.sleep(0.7)
                 self.game_map.update_accessibility(self.current_position, 
                                                 (new_x, new_y), True)
@@ -351,7 +351,7 @@ class HarvestBot:
         monitor = sct.monitors[1]
 
         self.gui_elements['running_indication'].config(text="✅ Bot running in Harvest Mode")
-        self.focus_on_game()
+        focar_jogo()
         
         iteration = 0
         while self.is_running:
@@ -363,7 +363,7 @@ class HarvestBot:
             keyboard.press('y')
             print("test validé")
             time.sleep(0.2)
-            img = self.capture_screen(sct, monitor)
+            img = capturar_tela(sct, monitor)
             temp_img_path = "temp_screenshot.jpg"
             cv2.imwrite(temp_img_path, img)
             keyboard.release('y')
@@ -372,7 +372,7 @@ class HarvestBot:
             detections = self.process_detections(temp_img_path)
             
             if detections:
-                self.human_like_click(*detections[0])
+                clique_humano(*detections[0])
 
                 stop_monster_event = threading.Event()
                 monitor_thread = threading.Thread(
@@ -389,8 +389,8 @@ class HarvestBot:
                         stop_monster_event.clear()
 
 
-                    self.human_like_movement(x, y)
-                    self.human_like_click(x, y)
+                    mover_mouse_humano(x, y)
+                    clique_humano(x, y)
                     time.sleep(0.2)
                 
                 time.sleep(8)
