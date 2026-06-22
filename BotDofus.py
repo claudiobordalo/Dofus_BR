@@ -28,6 +28,8 @@ from src.utilidades import (
     detectar_troca_mapa,
 )
 
+from src.mapa import GameMap
+
 class HarvestBot:
     def __init__(self, map_name: str, selected_classes: List[str], 
                  initial_position: Tuple[int, int], pod_available: int,
