@@ -17,7 +17,16 @@ import cv2
 from humancursor import SystemCursor
 from ultralytics import YOLO
 
-from config import *
+from src.config import *
+
+from src.utilidades import (
+    mover_mouse_humano,
+    clique_humano,
+    focar_jogo,
+    capturar_tela,
+    tela_preta,
+    detectar_troca_mapa,
+)
 
 class GameMap:
     def __init__(self, map_name: str):
@@ -240,60 +249,6 @@ class HarvestBot:
                 text="🟢 Bot executando"
             )
             print("[Bot] Continuando...")
-    
-    def human_like_click(self, x: int, y: int, click_duration: float = 0.2) -> None:
-        """Simule un clic humain aux coordonnées spécifiées."""
-        cursor = SystemCursor()
-        time.sleep(random.uniform(0.01, 0.05))
-        cursor.click_on([x, y], click_duration=random.uniform(0.1, click_duration))
-
-    def human_like_movement(self, x: int, y: int) -> None:
-        """Simule un mouvement de souris naturel."""
-        cursor = SystemCursor()
-        cursor.move_to([x, y])
-        time.sleep(random.uniform(0.02, 0.05))
-
-    def focus_on_game(self) -> None:
-        """Met le focus sur la fenêtre du jeu."""
-        screen_minimap = (1778, 958, 1904, 1065)
-        pixel_x = random.randint(screen_minimap[0], screen_minimap[2])
-        pixel_y = random.randint(screen_minimap[1], screen_minimap[3])
-        
-        self.human_like_movement(pixel_x, pixel_y)
-        self.human_like_click(pixel_x, pixel_y)
-
-    def capture_screen(self, sct, monitor) -> np.ndarray:
-        """Capture l'écran et retourne l'image en format BGR."""
-        screenshot = sct.grab(monitor)
-        img = np.array(screenshot)
-        return cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
-
-    def is_screen_black(self, threshold=10) -> bool:
-        """Vérifie si le centre de l'écran est noir."""
-        with mss.mss() as sct:
-            monitor = sct.monitors[1]
-            img = self.capture_screen(sct, monitor)
-        h, w, _ = img.shape
-        center_crop = img[h//3:2*h//3, w//3:2*w//3]
-        return np.mean(center_crop) < threshold
-
-    def detect_map_change(self, seconds: float = 3.5, interval: float = 0.2) -> bool:
-        """Détecte un changement de map."""
-        black_screen = False
-        
-        for _ in range(int(seconds/interval)):
-            time.sleep(interval)
-            if self.is_screen_black():
-                black_screen = True
-                break
-        
-        if not black_screen:
-            return False
-        
-        while True:
-            time.sleep(interval)
-            if not self.is_screen_black():
-                return True
 
     def monitor_monster_attack(self, stop_event: threading.Event, 
                              check_interval: float = 0.1) -> None:
